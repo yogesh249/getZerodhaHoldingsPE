@@ -300,6 +300,70 @@ app.get('/holdings', async (req, res) => {
         res.status(500).send('Error fetching holdings');
     }
 });
+
+app.get("/checkGTT", async (req, res) => {
+    console.log("GET /checkGTT route hit"); // Log when the route is accessed
+    try {
+        let tokenFile = req.query.tokenFile;
+        tokenFile = "D://" + tokenFile + "_token.txt";
+        const token = fs.readFileSync(tokenFile, "utf8");
+
+        // Fetch the list of stocks from the /holdings endpoints
+
+
+        const holdingsResponse = await axios.get('https://kite.zerodha.com/oms/portfolio/holdings', {
+          headers: {
+              'Authorization': 'enctoken ' + token,
+              "Cache-Control": "no-cache"
+          }
+      });
+
+        const holdings = holdingsResponse.data.data;
+        // print the type of holdings
+        console.log(typeof holdings);
+       
+        // Fetch the GTT triggers
+        const gttResponse = await axios.get(
+            "https://kite.zerodha.com/oms/gtt/triggers",
+            {
+                headers: {
+                    Authorization: "enctoken " + token,
+                },
+            }
+        );
+
+        const gttTriggers = gttResponse.data.data;
+        console.log("GTT Triggers:", gttTriggers); // Log the GTT triggers
+        // Check if any GTT triggers exist for the stocks in the holdings
+        let table = `
+            <table border="1">
+          <tr>
+              <th>Trading Symbol</th>
+              <th>Transaction Type</th>
+              <th>Quantity</th>
+              <th>Price</th>
+          </tr>
+        `;
+
+        gttTriggers.forEach(trigger => {
+            table += `
+          <tr>
+              <td>${trigger.condition.tradingsymbol}</td>
+              <td>${trigger.orders[0].transaction_type}</td>
+              <td>${trigger.orders[0].quantity}</td>
+              <td>${trigger.orders[0].price}</td>
+          </tr>
+            `;
+        });
+
+        table += '</table>';
+        res.send(table);
+    } catch (error) {
+        console.error("Error checking GTT:", error); // Log the error
+        res.status(500).send("Error checking GTT");
+    }
+});
+
 app.listen(3000, (error) => {
     if (error) {
         console.error('Error starting server:', error);
