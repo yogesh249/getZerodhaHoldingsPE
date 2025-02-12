@@ -335,32 +335,68 @@ app.get("/checkGTT", async (req, res) => {
         const gttTriggers = gttResponse.data.data;
         console.log("GTT Triggers:", gttTriggers); // Log the GTT triggers
         // Check if any GTT triggers exist for the stocks in the holdings
+        // let table = `
+        //     <table border="1">
+        //   <tr>
+        //       <th>Trading Symbol</th>
+        //       <th>Transaction Type</th>
+        //       <th>Quantity</th>
+        //       <th>Price</th>
+        //   </tr>
+        // `;
+
+        // gttTriggers.forEach(trigger => {
+        //     const isPresentInHoldings = holdings.some(holding => holding.tradingsymbol === trigger.condition.tradingsymbol);
+        //     if (trigger.orders[0].transaction_type.toLowerCase() === 'sell') {
+        //         table += `
+        //         <tr>
+        //           <td>${trigger.condition.tradingsymbol}</td>
+        //           <td>${trigger.orders[0].transaction_type}</td>
+        //           <td>${trigger.orders[0].quantity}</td>
+        //           <td>${trigger.orders[0].price}</td>
+        //           <td style="background-color: ${isPresentInHoldings ? 'green' : 'red'};">${isPresentInHoldings}</td>
+        //         </tr>
+        //         `;
+        //     }
+        // });
+
+        // table += '</table>';
+
+        // For items in holdings, create a table with the GTT triggers, first column should have holdings and second column should have GTT triggers corresponding to that stock in holdings.
+        // The first rowspan should be equal to the number of holdings for that stock.
+        // The second column should have the GTT triggers for that stock.
+        // If there are no GTT triggers for that stock, then the second column should have a message saying "No GTT triggers for this stock".
+        // If there are GTT triggers for that stock, then the second column should have a table with the GTT triggers for that stock.
         let table = `
             <table border="1">
-          <tr>
-              <th>Trading Symbol</th>
-              <th>Transaction Type</th>
-              <th>Quantity</th>
-              <th>Price</th>
-          </tr>
-        `;
-
-        gttTriggers.forEach(trigger => {
-            const isPresentInHoldings = holdings.some(holding => holding.tradingsymbol === trigger.condition.tradingsymbol);
-            if (trigger.orders[0].transaction_type.toLowerCase() === 'sell') {
-                table += `
                 <tr>
-                  <td>${trigger.condition.tradingsymbol}</td>
-                  <td>${trigger.orders[0].transaction_type}</td>
-                  <td>${trigger.orders[0].quantity}</td>
-                  <td>${trigger.orders[0].price}</td>
-                  <td style="background-color: ${isPresentInHoldings ? 'green' : 'red'};">${isPresentInHoldings}</td>
+                    <th>Trading Symbol</th>
+                    <th>GTT Triggers</th>
                 </tr>
-                `;
-            }
-        });
-
-        table += '</table>';
+        `;
+        for (const holding of holdings) {
+            const gttTriggersForHolding = gttTriggers.filter(trigger => trigger.condition.tradingsymbol === holding.tradingsymbol);
+            table += `
+                <tr>
+                    <td>${holding.tradingsymbol}</td>
+                    <td>
+                        <table border="0">
+                            ${gttTriggersForHolding.length === 0 ? '<tr><td colspan="3">No GTT triggers for this stock</td></tr>' : gttTriggersForHolding.map(trigger => `
+                                <tr>
+                                    <td>${trigger.condition.tradingsymbol}</td>
+                                    <td style="background-color: ${trigger.orders[0].transaction_type === 'SELL' ? 'red' : 'green'}; color: white;">
+                                        ${trigger.orders[0].transaction_type}
+                                    </td>
+                                    <td>
+                                        ${trigger.orders[0].price}
+                                    </td>
+                                </tr>
+                            `).join('')}  
+                        </table>               
+                    </td>
+                </tr>
+            `;
+        }
         res.send(table);
     } catch (error) {
         console.error("Error checking GTT:", error); // Log the error
