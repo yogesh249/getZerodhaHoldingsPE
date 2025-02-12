@@ -34,7 +34,8 @@ app.get("/PE", async (req, res) => {
             } catch (screenerError) {
                 console.error(`Error fetching PE for ${req.query.symbol}:`, screenerError);
             }
-            res.send(PE);
+            if(PE!=0)
+              res.send(PE);
         
     } catch (error) {
         console.error('Error fetching PE:', error); // Log the error
@@ -104,8 +105,8 @@ app.get("/CMP", async (req, res) => {
 app.get("/PB", async (req, res) => {
     console.log('GET /combined route hit'); // Log when the route is accessed
     try {
-        const cmpResponse = await axios.get(`http://localhost:3000/CMP?symbol=${req.query.symbol}`);
-        const bvResponse = await axios.get(`http://localhost:3000/BV?symbol=${req.query.symbol}`);
+        const cmpResponse = await axios.get(`http://localhost:3000/CMP?symbol=${req.query.symbol}&tokenFile=${req.query.tokenFile}`);
+        const bvResponse = await axios.get(`http://localhost:3000/BV?symbol=${req.query.symbol}&tokenFile=${req.query.tokenFile}`);
         if (bvResponse.data != 0) {
           res.send("" + (cmpResponse.data / bvResponse.data).toFixed(2));
         } else {
@@ -122,25 +123,21 @@ app.get("/PB", async (req, res) => {
 app.get('/holdings', async (req, res) => {
     console.log('GET /holdings route hit'); // Log when the route is accessed
     try {
+        let tokenFile = req.query.tokenFile;
+        tokenFile = "D://" + tokenFile + "_token.txt";
+        const token = fs.readFileSync(tokenFile, "utf8");
+
         const response = await axios.get('https://kite.zerodha.com/oms/portfolio/holdings', {
-            // headers: {
-            //     'Authorization': 'enctoken 2scp3+IfaaHaYHh1tI7lpJY1q3bojfnGgiNBjwrfxyqMnfBoT2BIgREcE7bV6d17H3DdOZxaZOq1mST+YQ6G8Zirw7L6jAzl4qqsjPjAxlIwYd3NUqeU7g==',
-            // "Cache-Control": "no-cache"
-            // }
-            headers:
-            {
-                'Authorization': 'enctoken L9/jM121dfZKcepcJiD5tcyzN0hwXD/BJvfJ51EaYbYH42yK4rKWHozkgVY8OolFA/oN8QkgIr7JEuGxA/UltJgAMus2sT8CJcfkYbwDkpQsf6HZlYMeNQ==',
+            headers: {
+                'Authorization': 'enctoken ' + token,
                 "Cache-Control": "no-cache"
             }
         });
-
-
 
         console.log('Received response from API'); // Log when a response is received
 
         const holdings = response.data.data;
         let table = `
-
          <style>
                 table {
                     width: 100%;
@@ -206,7 +203,7 @@ app.get('/holdings', async (req, res) => {
                         if (shouldSwitch) {
                             rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
                             switching = true;
-                            switchcount ++;
+                            switchcount++;
                         } else {
                             if (switchcount == 0 && dir == "asc") {
                                 dir = "desc";
@@ -215,14 +212,20 @@ app.get('/holdings', async (req, res) => {
                         }
                     }
                 }
+
+                function refreshTable() {
+                    location.reload();
+                }
+
+                // setInterval(refreshTable, 5000); // Refresh every 5 seconds
             </script>
             <table id="holdingsTable" border="1">
                 <tr>
                     <th onclick="sortTable(0)">Instrument</th>
                     <th onclick="sortTable(1)">Book Value</th>
-                     <th onclick="sortTable(2)">PB</th>
-                     <th onclick="sortTable(3)">Stock P/E</th>
-                     <th onclick="sortTable(4)">Grahams Number</th>
+                    <th onclick="sortTable(2)">PB</th>
+                    <th onclick="sortTable(3)">Stock P/E</th>
+                    <th onclick="sortTable(4)">Grahams Number</th>
                     <th onclick="sortTable(5)">Qty.</th>
                     <th onclick="sortTable(6)">Avg. cost</th>
                     <th onclick="sortTable(7)">LTP</th>
