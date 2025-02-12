@@ -370,19 +370,19 @@ app.get("/checkGTT", async (req, res) => {
         let table = `
             <table border="1">
                 <tr>
-                    <th>Trading Symbol</th>
+                    <th>Holdings</th>
                     <th>GTT Triggers</th>
                 </tr>
         `;
         for (const holding of holdings) {
-            const gttTriggersForHolding = gttTriggers.filter(trigger => trigger.condition.tradingsymbol === holding.tradingsymbol);
+            const gttTriggersForHolding = gttTriggers.filter(trigger => trigger.condition.tradingsymbol === holding.tradingsymbol && trigger.status=='active');
             table += `
                 <tr>
                     <td>${holding.tradingsymbol}</td>
                     <td>
-                        <table border="0">
+                        <table  style="width: 100%">
                             ${gttTriggersForHolding.length === 0 ? '<tr><td colspan="3">No GTT triggers for this stock</td></tr>' : gttTriggersForHolding.map(trigger => `
-                                <tr>
+                                <tr border="1">
                                     <td>${trigger.condition.tradingsymbol}</td>
                                     <td style="background-color: ${trigger.orders[0].transaction_type === 'SELL' ? 'red' : 'green'}; color: white;">
                                         ${trigger.orders[0].transaction_type}
