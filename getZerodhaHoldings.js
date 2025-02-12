@@ -346,15 +346,17 @@ app.get("/checkGTT", async (req, res) => {
         `;
 
         gttTriggers.forEach(trigger => {
+            const isPresentInHoldings = holdings.some(holding => holding.tradingsymbol === trigger.condition.tradingsymbol);
             if (trigger.orders[0].transaction_type.toLowerCase() === 'sell') {
-          table += `
-              <tr>
-            <td>${trigger.condition.tradingsymbol}</td>
-            <td>${trigger.orders[0].transaction_type}</td>
-            <td>${trigger.orders[0].quantity}</td>
-            <td>${trigger.orders[0].price}</td>
-              </tr>
-          `;
+                table += `
+                <tr>
+                  <td>${trigger.condition.tradingsymbol}</td>
+                  <td>${trigger.orders[0].transaction_type}</td>
+                  <td>${trigger.orders[0].quantity}</td>
+                  <td>${trigger.orders[0].price}</td>
+                  <td style="background-color: ${isPresentInHoldings ? 'green' : 'red'};">${isPresentInHoldings}</td>
+                </tr>
+                `;
             }
         });
 
