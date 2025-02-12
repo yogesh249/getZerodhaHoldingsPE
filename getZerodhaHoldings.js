@@ -320,7 +320,7 @@ app.get("/checkGTT", async (req, res) => {
 
         const holdings = holdingsResponse.data.data;
         // print the type of holdings
-        console.log(typeof holdings);
+        console.log('holdings = ' +holdings);
        
         // Fetch the GTT triggers
         const gttResponse = await axios.get(
