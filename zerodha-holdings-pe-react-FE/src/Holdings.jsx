@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import './App.css'
+import './Holdings.css'
 
-function App() {
+function Holdings() {
   const [holdings, setHoldings] = useState([])
 
   useEffect(() => {
@@ -18,7 +18,6 @@ function App() {
         <thead>
           <tr>
             <th>Trading Symbol</th>
-            <th>Exchange</th>
             <th>Quantity</th>
             <th>Average Price</th>
             <th>Last Price</th>
@@ -33,7 +32,6 @@ function App() {
           {holdings.map((holding, index) => (
             <tr key={index}>
               <td>{holding.tradingsymbol}</td>
-              <td>{holding.exchange}</td>
               <td>{holding.quantity}</td>
               <td>{holding.average_price.toFixed(2)}</td>
               <td>{holding.last_price.toFixed(2)}</td>
@@ -50,4 +48,4 @@ function App() {
   )
 }
 
-export default App
+export default Holdings;
