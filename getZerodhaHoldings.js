@@ -1,8 +1,11 @@
 const express = require('express');
 const axios = require('axios');
 const fs = require('fs');
+// const qs=require('qs');
 const app = express();
 const cors = require('cors');
+const querystring = require('querystring');
+const e = require('express');
 const PORT = 5000;
 
 // Middleware
@@ -307,13 +310,47 @@ app.post("/copyGTT2HUF", async (req, res) => {
     try {
         // Log the received trigger
         // Read the trigger from the POST body
-        console.log(req.body); // Log the received body
-        const trigger = JSON.parse(req.body.trigger);
+        const safeMessage = req.body.trigger.replace(/\n/g, ''); // Escape newlines
+        const trimmedMessage = safeMessage.trim();
+        const trigger = JSON.parse(trimmedMessage);
+        // Now make a call to the zerodha API to create a GTT trigger
+        // Use the token from the ${hufToken} 
+        // Use the trigger object to create the GTT trigger
+        // Log the response from the API
 
-        console.log("Received trigger:", trigger); // Log the received trigger
-        res.send("Trigger received and logged");
+        let hufTokenFile = "D://huf_token.txt";
+        const hufToken = fs.readFileSync(hufTokenFile, "utf8");
+        let condition=trigger.condition;
+        console.log("condition = ",condition);
+
+        let orders=trigger.orders;
+        console.log("orders = ",orders);
+        let payload = "condition=" + encodeURIComponent(JSON.stringify(condition))
+         + "&orders=" + encodeURIComponent(JSON.stringify(orders)) +"&type=single";
+        // console.log("payload = ",payload);
+        // Now replace the string cond= in conditionEncoded with empty string
+        // conditionEncoded=conditionEncoded.replace("cond%5B","");
+        // ordersEncoded=ordersEncoded.replace("ord%5B","");
+
+        //let finalPayLoad = qs.stringify(payload, {encode: true});
+        // console.log("finalPayLoad = ",finalPayLoad);
+        let finalPayLoad = payload;
+
+        console.log("finalPayLoad = ",finalPayLoad);
+        const response = await axios.post(
+            "https://kite.zerodha.com/oms/gtt/triggers",
+            finalPayLoad,
+            {
+            headers: {
+                Authorization: "enctoken " + hufToken, 
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            }
+        );
+        console.log("Response from API:", response.data);
+        res.status(200).send("GTT order placed successfully"); // Log the response from
     } catch (error) {
-        console.error("Error in /copyGTT2HUF:", error); // Log the error
+        console.error("Error in /copyGTT2HUF:"); // Log the error
         res.status(500).send("Error processing trigger");
     }
 });
@@ -340,7 +377,7 @@ app.get("/checkGTT", async (req, res) => {
 
         const holdings = holdingsResponse.data.data;
         // print the type of holdings
-        console.log('holdings = ' +holdings);
+        // console.log('holdings = ' +holdings);
        
         // Fetch the GTT triggers
         const gttResponse = await axios.get(
@@ -353,7 +390,7 @@ app.get("/checkGTT", async (req, res) => {
         );
 
         const gttTriggers = gttResponse.data.data;
-        console.log("GTT Triggers:", gttTriggers); // Log the GTT triggers
+        // console.log("GTT Triggers:", gttTriggers); // Log the GTT triggers
 
         // For items in holdings, create a table with the GTT triggers, first column should have holdings and second column should have GTT triggers corresponding to that stock in holdings.
         // The first rowspan should be equal to the number of holdings for that stock.
@@ -361,17 +398,6 @@ app.get("/checkGTT", async (req, res) => {
         // If there are no GTT triggers for that stock, then the second column should have a message saying "No GTT triggers for this stock".
         // If there are GTT triggers for that stock, then the second column should have a table with the GTT triggers for that stock.
         let table2 = `
-            <script type="text/javascript">
-            function copyToHUF(trigger) {
-                var triggerString = JSON.stringify(trigger);
-                alert(triggerString);
-                // Now post this triggerString to /copyGTT2HUF in the POST body
-                // Give the response in the alert
-                
-                
-
-            }
-            </script>
             <table border="1">
             <tr>
                 <th>Holdings</th>
