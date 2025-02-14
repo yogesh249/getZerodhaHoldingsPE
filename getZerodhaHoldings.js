@@ -354,6 +354,7 @@ app.post("/copyGTT2HUF", async (req, res) => {
         res.status(500).send("Error processing trigger");
     }
 });
+
 app.get("/checkGTT", async (req, res) => {
     console.log("GET /checkGTT route hit"); // Log when the route is accessed
     try {
