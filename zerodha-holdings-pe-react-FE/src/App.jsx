@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
@@ -27,6 +25,8 @@ function App() {
             <th>P&L</th>
             <th>Day Change</th>
             <th>Day Change %</th>
+            <th>PE</th>
+            <th>BV</th>
           </tr>
         </thead>
         <tbody>
@@ -35,11 +35,13 @@ function App() {
               <td>{holding.tradingsymbol}</td>
               <td>{holding.exchange}</td>
               <td>{holding.quantity}</td>
-              <td>{holding.average_price}</td>
-              <td>{holding.last_price}</td>
-              <td>{holding.pnl}</td>
-              <td>{holding.day_change}</td>
-              <td>{holding.day_change_percentage}%</td>
+              <td>{holding.average_price.toFixed(2)}</td>
+              <td>{holding.last_price.toFixed(2)}</td>
+              <td>{holding.pnl.toFixed(2)}</td>
+              <td>{holding.day_change.toFixed(2)}</td>
+              <td>{holding.day_change_percentage.toFixed(2)}%</td>
+              <td>{holding.PE}</td>
+              <td>{holding.BV}</td>
             </tr>
           ))}
         </tbody>

@@ -29,9 +29,22 @@ app.get('/holdingsJSON', async (req, res) => {
             }
         });
         const holdings = response.data.data;
+        for (const holding of holdings) {
+            holding.PE = 123;
+            holding.BV = 456;
+        }
+        console.log(holdings);
         res.status(200).send(holdings);
     } catch (error) {
         console.error('Error fetching holdingsJSON:', error); // Log the error
         res.status(500).send('Error fetching holdingsJSON');
+    }
+});
+
+app.listen(3000, (error) => {
+    if (error) {
+        console.error('Error starting server:', error);
+    } else {
+        console.log('Server is running on port 3000');
     }
 });
