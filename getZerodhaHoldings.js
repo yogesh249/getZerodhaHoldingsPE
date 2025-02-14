@@ -341,6 +341,15 @@ app.get("/checkGTT", async (req, res) => {
         // If there are no GTT triggers for that stock, then the second column should have a message saying "No GTT triggers for this stock".
         // If there are GTT triggers for that stock, then the second column should have a table with the GTT triggers for that stock.
         let table2 = `
+            <script type="text/javascript">
+                function copyToHUF(trigger) {
+                
+                    // alert this trigger object in readble form
+                    // convert trigger to string
+                    var triggerString = JSON.stringify(trigger);
+                    alert(triggerString);
+                }
+            </script>
             <table border="1">
                 <tr>
                     <th>Holdings</th>
@@ -362,6 +371,9 @@ app.get("/checkGTT", async (req, res) => {
                                     </td>
                                     <td>
                                         ${trigger.orders[0].price}
+                                    </td>
+                                    <td>
+                                        <input type="button" value="Copy to HUF" onclick='copyToHUF(${JSON.stringify(trigger)})'></input>
                                     </td>
                                 </tr>
                             `).join('')}  
