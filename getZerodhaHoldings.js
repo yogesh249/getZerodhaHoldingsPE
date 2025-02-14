@@ -8,7 +8,8 @@ const PORT = 5000;
 // Middleware
 app.use(cors()); // Allows React to call this API
 app.use(express.json());
-
+// THis is essential in order to get hiddent fields on the server side.
+app.use(express.urlencoded({ extended: true }));  // Parses form data
 
 console.log('Starting server...'); // Log when starting the server
 
@@ -300,13 +301,32 @@ app.get('/holdings', async (req, res) => {
         res.status(500).send('Error fetching holdings');
     }
 });
+app.post("/copyGTT2HUF", async (req, res) => {
 
+    console.log("POST /copyGTT2HUF route hit"); // Log when the route is accessed
+    try {
+        // Log the received trigger
+        // Read the trigger from the POST body
+        console.log(req.body); // Log the received body
+        const trigger = JSON.parse(req.body.trigger);
+
+        console.log("Received trigger:", trigger); // Log the received trigger
+        res.send("Trigger received and logged");
+    } catch (error) {
+        console.error("Error in /copyGTT2HUF:", error); // Log the error
+        res.status(500).send("Error processing trigger");
+    }
+});
 app.get("/checkGTT", async (req, res) => {
     console.log("GET /checkGTT route hit"); // Log when the route is accessed
     try {
         let tokenFile = req.query.tokenFile;
         tokenFile = "D://" + tokenFile + "_token.txt";
         const token = fs.readFileSync(tokenFile, "utf8");
+
+        
+        let hufTokenFile = "D://huf_token.txt";
+        const hufToken = fs.readFileSync(hufTokenFile, "utf8");
 
         // Fetch the list of stocks from the /holdings endpoints
 
@@ -342,19 +362,21 @@ app.get("/checkGTT", async (req, res) => {
         // If there are GTT triggers for that stock, then the second column should have a table with the GTT triggers for that stock.
         let table2 = `
             <script type="text/javascript">
-                function copyToHUF(trigger) {
+            function copyToHUF(trigger) {
+                var triggerString = JSON.stringify(trigger);
+                alert(triggerString);
+                // Now post this triggerString to /copyGTT2HUF in the POST body
+                // Give the response in the alert
                 
-                    // alert this trigger object in readble form
-                    // convert trigger to string
-                    var triggerString = JSON.stringify(trigger);
-                    alert(triggerString);
-                }
+                
+
+            }
             </script>
             <table border="1">
-                <tr>
-                    <th>Holdings</th>
-                    <th>GTT Triggers</th>
-                </tr>
+            <tr>
+                <th>Holdings</th>
+                <th>GTT Triggers</th>
+            </tr>
         `;
         for (const holding of holdings) {
             const gttTriggersForHolding = gttTriggers.filter(trigger => trigger.condition.tradingsymbol === holding.tradingsymbol && trigger.status=='active');
@@ -362,7 +384,7 @@ app.get("/checkGTT", async (req, res) => {
                 <tr>
                     <td>${holding.tradingsymbol}</td>
                     <td>
-                        <table  style="width: 100%">
+                        <table style="width: 100%">
                             ${gttTriggersForHolding.length === 0 ? '<tr><td colspan="3" style="background-color:yellow">No GTT triggers for this stock</td></tr>' : gttTriggersForHolding.map(trigger => `
                                 <tr border="1">
                                     <td>${trigger.condition.tradingsymbol}</td>
@@ -373,7 +395,10 @@ app.get("/checkGTT", async (req, res) => {
                                         ${trigger.orders[0].price}
                                     </td>
                                     <td>
-                                        <input type="button" value="Copy to HUF" onclick='copyToHUF(${JSON.stringify(trigger)})'></input>
+                                        <form action="/copyGTT2HUF" method="POST">
+                                            <input type="hidden" name="trigger" value='${JSON.stringify(trigger)}'>
+                                            <input type="submit" value="Copy to HUF2">Copy to HUF</input>
+                                        </form>
                                     </td>
                                 </tr>
                             `).join('')}  
