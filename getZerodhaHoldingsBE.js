@@ -40,6 +40,30 @@ app.get('/holdingsJSON', async (req, res) => {
         res.status(500).send('Error fetching holdingsJSON');
     }
 });
+app.get("/getGTTOrders", async (req, res) => {
+    console.log("GET /getGTTOrders route hit"); // Log when the route is accessed
+    try {
+        let tokenFile = req.query.tokenFile;
+        tokenFile = "D://" + tokenFile + "_token.txt";
+        const token = fs.readFileSync(tokenFile, "utf8");
+        // Fetch the GTT triggers
+        const gttResponse = await axios.get(
+            "https://kite.zerodha.com/oms/gtt/triggers",
+            {
+                headers: {
+                    Authorization: "enctoken " + token,
+                },
+            }
+        );
+
+        const gttTriggers = gttResponse.data.data;
+        return res.status(200).send(gttTriggers);
+    }
+    catch (error) {
+        console.error("Error fetching GTT triggers:", error); // Log the error
+        return res.status(500).send("Error fetching GTT triggers");
+    }
+});
 
 app.listen(3000, (error) => {
     if (error) {

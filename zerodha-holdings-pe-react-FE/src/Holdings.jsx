@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react'
-import './Holdings.css'
+import { useState, useEffect } from 'react';
+import './Holdings.css';
 
-function Holdings() {
-  const [holdings, setHoldings] = useState([])
+function Holdings({ tokenFile }) {
+  const [holdings, setHoldings] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/holdingsJSON?tokenFile=zerodha')
+    fetch(`http://localhost:3000/holdingsJSON?tokenFile=${tokenFile}`)
       .then(response => response.json())
       .then(data => setHoldings(data))
-      .catch(error => console.error('Error fetching holdings:', error))
-  }, [])
+      .catch(error => console.error('Error fetching holdings:', error));
+  }, [tokenFile]);
 
   return (
     <>
-      <h1>Holdings</h1>
+      <h1>{tokenFile + " Holdings"}</h1>
       <table>
         <thead>
           <tr>
@@ -45,7 +45,7 @@ function Holdings() {
         </tbody>
       </table>
     </>
-  )
+  );
 }
 
 export default Holdings;
