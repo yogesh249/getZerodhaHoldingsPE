@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Holdings from './Holdings';
+import GTTOrders from './GTTOrders';
 function ZerodhaTabs() {
   const [key, setKey] = useState('Holdings');
   return (
@@ -20,8 +21,8 @@ function ZerodhaTabs() {
       <Tab eventKey="HUF Holdings" title="HUF Holdings">
         <Holdings tokenFile="huf" />
       </Tab>
-      <Tab eventKey="contact" title="Contact" disabled>
-        Tab content for Contact
+      <Tab eventKey="Zerodha GTTOrdders" title="Zerodha GTTOrders">
+        <GTTOrders tokenFile="zerodha" />
       </Tab>
     </Tabs>
   );

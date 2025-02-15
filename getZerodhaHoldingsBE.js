@@ -40,8 +40,8 @@ app.get('/holdingsJSON', async (req, res) => {
         res.status(500).send('Error fetching holdingsJSON');
     }
 });
-app.get("/getGTTOrders", async (req, res) => {
-    console.log("GET /getGTTOrders route hit"); // Log when the route is accessed
+app.get("/getGTTOrdersJSON", async (req, res) => {
+    console.log("GET /getGTTOrdersJSON route hit"); // Log when the route is accessed
     try {
         let tokenFile = req.query.tokenFile;
         tokenFile = "D://" + tokenFile + "_token.txt";
