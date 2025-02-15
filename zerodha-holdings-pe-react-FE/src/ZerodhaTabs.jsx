@@ -24,6 +24,9 @@ function ZerodhaTabs() {
       <Tab eventKey="Zerodha GTTOrdders" title="Zerodha GTTOrders">
         <GTTOrders tokenFile="zerodha" />
       </Tab>
+      <Tab eventKey="HUF GTTOrdders" title="HUF GTTOrders">
+        <GTTOrders tokenFile="huf" />
+      </Tab>
     </Tabs>
   );
 }
