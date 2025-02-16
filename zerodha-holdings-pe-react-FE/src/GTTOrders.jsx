@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import Button from 'react-bootstrap/Button';
 function GTTOrders({ tokenFile }) {
   const [gttOrders, setGttOrders] = useState([]);
   const [holdings, setHoldings] = useState([]);
@@ -35,6 +35,9 @@ function GTTOrders({ tokenFile }) {
                                 </div>
 
                             ))}
+                    </td>
+                    <td>
+                      <Button variant="primary">Copy to HUF</Button>
                     </td>
 
                 </tr>
