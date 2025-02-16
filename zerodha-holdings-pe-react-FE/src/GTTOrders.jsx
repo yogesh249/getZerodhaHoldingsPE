@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
+
 function GTTOrders({ tokenFile }) {
   const [gttOrders, setGttOrders] = useState([]);
   const [holdings, setHoldings] = useState([]);
@@ -17,7 +18,9 @@ function GTTOrders({ tokenFile }) {
       .then(data => setHoldings(data))
       .catch(error => console.error('Error fetching holdings:', error));
   }, [tokenFile]);
-//   console.log(JSON.stringify(gttOrders));
+
+
+
   return (
     <>
     <div>
@@ -33,13 +36,11 @@ function GTTOrders({ tokenFile }) {
                                 <div>
                                     {holding.tradingsymbol} {order.orders[0].price}  {order.orders[0].transaction_type} 
                                 </div>
-
                             ))}
                     </td>
                     <td>
-                      <Button variant="primary">Copy to HUF</Button>
+                      <Button variant="primary" onClick={() => alert(holding.tradingsymbol)}>Copy to HUF</Button>
                     </td>
-
                 </tr>
             ))}
             </tbody>
