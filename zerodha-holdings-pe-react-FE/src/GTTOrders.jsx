@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
 
-function GTTOrders({ tokenFile }) {
+function GTTOrders({ tokenFile, otherTokenFile }) {
   const [gttOrders, setGttOrders] = useState([]);
   const [holdings, setHoldings] = useState([]);
 
@@ -19,7 +19,24 @@ function GTTOrders({ tokenFile }) {
       .catch(error => console.error('Error fetching holdings:', error));
   }, [tokenFile]);
 
-
+  const handleCopyToHUF = (order) => {
+    fetch('http://localhost:3000/copyGTT2HUF', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ order }),
+    })
+    //.then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      alert('Copy to HUF successful');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('Copy to HUF failed');
+    });
+  };
 
   return (
     <>
@@ -33,13 +50,11 @@ function GTTOrders({ tokenFile }) {
                         {gttOrders
                             .filter(order => order.orders[0].tradingsymbol === holding.tradingsymbol)
                             .map(order => (
-                                <div>
+                                <div key={order.id}>
                                     {holding.tradingsymbol} {order.orders[0].price}  {order.orders[0].transaction_type} 
+                                    <Button variant="primary" onClick={() => handleCopyToHUF(order)}>Copy to HUF</Button>
                                 </div>
                             ))}
-                    </td>
-                    <td>
-                      <Button variant="primary" onClick={() => alert(holding.tradingsymbol)}>Copy to HUF</Button>
                     </td>
                 </tr>
             ))}

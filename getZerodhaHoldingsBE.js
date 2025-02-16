@@ -64,7 +64,58 @@ app.get("/getGTTOrdersJSON", async (req, res) => {
         return res.status(500).send("Error fetching GTT triggers");
     }
 });
+app.post("/copyGTT2HUF", async (req, res) => {
 
+    console.log("POST /copyGTT2HUF route hit"); // Log when the route is accessed
+    try {
+        // Log the received trigger
+        // Read the trigger from the POST body
+        console.log("req.body=",req.body);
+        const safeMessage = JSON.stringify(req.body).replace(/\n/g, ''); // Escape newlines
+        console.log("safeMessage = ",safeMessage);
+        const trimmedMessage = safeMessage.trim();
+        const trigger = JSON.parse(trimmedMessage);
+        // Now make a call to the zerodha API to create a GTT trigger
+        // Use the token from the ${hufToken} 
+        // Use the trigger object to create the GTT trigger
+        // Log the response from the API
+        console.log('trigger=',trigger);
+        let hufTokenFile = "D://huf_token.txt";
+        const hufToken = fs.readFileSync(hufTokenFile, "utf8");
+        let condition=trigger.order.condition;
+        console.log("condition = ",condition);
+
+        let orders=trigger.order.orders;
+        console.log("orders = ",orders);
+        let payload = "condition=" + encodeURIComponent(JSON.stringify(condition))
+         + "&orders=" + encodeURIComponent(JSON.stringify(orders)) +"&type=single";
+        // console.log("payload = ",payload);
+        // Now replace the string cond= in conditionEncoded with empty string
+        // conditionEncoded=conditionEncoded.replace("cond%5B","");
+        // ordersEncoded=ordersEncoded.replace("ord%5B","");
+
+        //let finalPayLoad = qs.stringify(payload, {encode: true});
+        // console.log("finalPayLoad = ",finalPayLoad);
+        let finalPayLoad = payload;
+
+        console.log("finalPayLoad = ",finalPayLoad);
+        const response = await axios.post(
+            "https://kite.zerodha.com/oms/gtt/triggers",
+            finalPayLoad,
+            {
+            headers: {
+                Authorization: "enctoken " + hufToken, 
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            }
+        );
+        console.log("Response from API:", response.data);
+        res.status(200).send("GTT order placed successfully"); // Log the response from
+    } catch (error) {
+        console.error("Error in /copyGTT2HUF:", error); // Log the error
+        res.status(500).send("Error processing trigger");
+    }
+});
 app.listen(3000, (error) => {
     if (error) {
         console.error('Error starting server:', error);

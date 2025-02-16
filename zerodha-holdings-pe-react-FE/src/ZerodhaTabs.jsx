@@ -22,10 +22,10 @@ function ZerodhaTabs() {
         <Holdings tokenFile="huf" />
       </Tab>
       <Tab eventKey="Zerodha GTTOrdders" title="Zerodha GTTOrders">
-        <GTTOrders tokenFile="zerodha" />
+        <GTTOrders tokenFile="zerodha" otherTokenFile="huf"/>
       </Tab>
       <Tab eventKey="HUF GTTOrdders" title="HUF GTTOrders">
-        <GTTOrders tokenFile="huf" />
+        <GTTOrders tokenFile="huf" otherTokenFile="zerodha"/>
       </Tab>
     </Tabs>
   );
