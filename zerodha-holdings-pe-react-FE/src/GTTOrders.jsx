@@ -61,7 +61,12 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
     <>
     <div>
         <table border="1">
-            <tbody>
+          <tbody>
+            <tr>
+                <th>Holdings</th>
+                <th>GTT Orders</th>
+            </tr>
+
             {holdings.map(holding => (
                 <tr key={holding.tradingsymbol}>
                     <td>{holding.tradingsymbol}</td>
@@ -71,7 +76,7 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
                             .map(order => (
                                 <div key={order.id}>
                                     {holding.tradingsymbol} {order.orders[0].price}  {order.orders[0].transaction_type} 
-                                    <Button variant="primary" onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile)}>Copy to HUF</Button>
+                                    <Button variant="primary" onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile)}>Copy to {otherTokenFile}</Button>
                                 </div>
                             ))}
                     </td>
