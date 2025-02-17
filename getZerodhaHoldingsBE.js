@@ -13,7 +13,80 @@ app.use(cors()); // Allows React to call this API
 app.use(express.json());
 // THis is essential in order to get hiddent fields on the server side.
 app.use(express.urlencoded({ extended: true }));  // Parses form data
+app.get("/CMP", async (req, res) => {
+    console.log('GET /BV route hit'); // Log when the route is accessed
+    try {
+            let cmp = 0;
+            try {
+                const screenerResponse = await axios.get(`https://www.screener.in/company/${req.query.symbol}/consolidated/`);
+                const cmpMatch = screenerResponse.data.match(/<span class="name">\s*Current Price\s*<\/span>\s*<span class="nowrap value">[^<]*<span class="number">([^<]+)<\/span>/);
+                if (cmpMatch) {
+                    cmp = cmpMatch[1];
+                    // Remove comma from bookValue String
+                    cmp = cmp.replace(/,/g, '');
+                    console.log(`cmp for ${req.query.symbol}: ${cmp}`); // Log the BV value  
+                }
+                else{
+                    console.log(`cmp for ${req.query.symbol}: N/A`); // Log the BV value
+                    cmp=0;
+                }
 
+
+            } catch (screenerError) {
+                console.error(`Error fetching PE for ${req.query.symbol}:`, screenerError);
+            }
+            res.send(cmp);
+        
+    } catch (error) {
+        console.error('Error fetching BV:', error); // Log the error
+        res.status(500).send('Error fetching cmp');
+    }
+});
+app.get("/BV", async (req, res) => {
+    console.log('GET /BV route hit'); // Log when the route is accessed
+    try {
+            let bookValue = 0;
+            try {
+                const screenerResponse = await axios.get(`https://www.screener.in/company/${req.query.symbol}/consolidated/`);
+                const bookValueMatch = screenerResponse.data.match(/<span class="name">\s*Book Value\s*<\/span>\s*<span class="nowrap value">[^<]*<span class="number">([^<]+)<\/span>/);
+                if (bookValueMatch) {
+                    bookValue = bookValueMatch[1];
+                    // Remove comma from bookValue String
+                    bookValue = bookValue.replace(/,/g, '');
+                    console.log(`bookValue for ${req.query.symbol}: ${bookValue}`); // Log the BV value  
+                }
+                else{
+                    console.log(`bookValue for ${req.query.symbol}: N/A`); // Log the BV value
+                    bookValue=0;
+                }
+
+
+            } catch (screenerError) {
+                console.error(`Error fetching PE for ${req.query.symbol}:`, screenerError);
+            }
+            res.status(200).send(bookValue);
+        
+    } catch (error) {
+        console.error('Error fetching BV:', error); // Log the error
+        res.status(200).send('0')
+    }
+});
+app.get("/PB", async (req, res) => {
+    console.log('GET /combined route hit'); // Log when the route is accessed
+    try {
+        const cmpResponse = await axios.get(`http://localhost:3000/CMP?symbol=${req.query.symbol}&tokenFile=${req.query.tokenFile}`);
+        const bvResponse = await axios.get(`http://localhost:3000/BV?symbol=${req.query.symbol}&tokenFile=${req.query.tokenFile}`);
+        if (bvResponse.data != 0) {
+          res.send("" + (cmpResponse.data / bvResponse.data).toFixed(2));
+        } else {
+          res.send(0);
+        }        
+
+    } catch (error) {
+        console.error('Error fetching combined data:', error); // Log the error
+        res.status(500).send('Error fetching combined data');
+    }
+});
 console.log('Starting server...'); // Log when starting the server
 app.get('/holdingsJSON', async (req, res) => {
     console.log('GET /holdingsJSON route hit'); // Log when the route is accessed
@@ -30,8 +103,13 @@ app.get('/holdingsJSON', async (req, res) => {
         });
         const holdings = response.data.data;
         for (const holding of holdings) {
+            console.log("Fetching PE for", holding.tradingsymbol);
+            const response = await axios.get('http://localhost:3000/BV?symbol=' + holding.tradingsymbol, {
+                  "Cache-Control": "no-cache"
+            });
+            const bv = response.data;
             holding.PE = 123;
-            holding.BV = 456;
+            holding.BV = bv;
         }
         console.log(holdings);
         res.status(200).send(holdings);

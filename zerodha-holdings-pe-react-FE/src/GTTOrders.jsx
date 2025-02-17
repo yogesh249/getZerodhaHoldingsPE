@@ -5,7 +5,7 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
   const [gttOrders, setGttOrders] = useState([]);
   const [holdings, setHoldings] = useState([]);
   const [reload, setReload] = useState(false);
-
+  
   useEffect(() => {
     fetch(`http://localhost:3000/getGTTOrdersJSON?tokenFile=${tokenFile}`)
       .then(response => response.json())

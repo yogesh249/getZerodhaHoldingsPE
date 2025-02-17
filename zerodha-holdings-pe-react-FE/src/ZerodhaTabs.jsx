@@ -27,16 +27,16 @@ function ZerodhaTabs() {
       style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }}
     >
       <Tab eventKey="Holdings" title="Holdings">
-        <Holdings tokenFile="zerodha" />
+        {key === 'Holdings' && <Holdings tokenFile="zerodha" />}
       </Tab>
       <Tab eventKey="HUF Holdings" title="HUF Holdings">
-        <Holdings tokenFile="huf" />
+        {key === 'HUF Holdings' && <Holdings tokenFile="huf" />}
       </Tab>
       <Tab eventKey="Zerodha GTTOrders" title="Zerodha GTTOrders">
-        <GTTOrders tokenFile="zerodha" otherTokenFile="huf" reload={reload}/>
+        {key === 'Zerodha GTTOrders' && <GTTOrders tokenFile="zerodha" otherTokenFile="huf" reload={reload} />}
       </Tab>
       <Tab eventKey="HUF GTTOrders" title="HUF GTTOrders">
-        <GTTOrders tokenFile="huf" otherTokenFile="zerodha" reload={reload} />
+        {key === 'HUF GTTOrders' && <GTTOrders tokenFile="huf" otherTokenFile="zerodha" reload={reload} />}
       </Tab>
     </Tabs>
   );

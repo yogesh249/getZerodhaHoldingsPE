@@ -7,7 +7,10 @@ function Holdings({ tokenFile }) {
   useEffect(() => {
     fetch(`http://localhost:3000/holdingsJSON?tokenFile=${tokenFile}`)
       .then(response => response.json())
-      .then(data => setHoldings(data))
+      .then(data => {
+        setHoldings(data);
+        localStorage.setItem(tokenFile + "Holdings", JSON.stringify(data));
+      })
       .catch(error => console.error('Error fetching holdings:', error));
   }, [tokenFile]);
 
