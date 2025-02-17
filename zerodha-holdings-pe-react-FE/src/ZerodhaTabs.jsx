@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Holdings from './Holdings';
 import GTTOrders from './GTTOrders';
+
 function ZerodhaTabs() {
   const [key, setKey] = useState('Holdings');
+  const [reload, setReload] = useState(false);
+
+  useEffect(() => {
+    if (key === 'HUF GTTOrders' || key === 'Zerodha GTTOrders') {
+      setReload(!reload);
+    } 
+  }, [key]);
+
   return (
     <Tabs
       defaultActiveKey="Holdings"
@@ -21,11 +30,11 @@ function ZerodhaTabs() {
       <Tab eventKey="HUF Holdings" title="HUF Holdings">
         <Holdings tokenFile="huf" />
       </Tab>
-      <Tab eventKey="Zerodha GTTOrdders" title="Zerodha GTTOrders">
-        <GTTOrders tokenFile="zerodha" otherTokenFile="huf"/>
+      <Tab eventKey="Zerodha GTTOrders" title="Zerodha GTTOrders">
+        <GTTOrders tokenFile="zerodha" otherTokenFile="huf" reload={reload}/>
       </Tab>
-      <Tab eventKey="HUF GTTOrdders" title="HUF GTTOrders">
-        <GTTOrders tokenFile="huf" otherTokenFile="zerodha"/>
+      <Tab eventKey="HUF GTTOrders" title="HUF GTTOrders">
+        <GTTOrders tokenFile="huf" otherTokenFile="zerodha" reload={reload} />
       </Tab>
     </Tabs>
   );

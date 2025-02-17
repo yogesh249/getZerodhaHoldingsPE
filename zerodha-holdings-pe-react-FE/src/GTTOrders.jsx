@@ -4,13 +4,14 @@ import Button from 'react-bootstrap/Button';
 function GTTOrders({ tokenFile, otherTokenFile }) {
   const [gttOrders, setGttOrders] = useState([]);
   const [holdings, setHoldings] = useState([]);
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:3000/getGTTOrdersJSON?tokenFile=${tokenFile}`)
       .then(response => response.json())
       .then(data => setGttOrders(data))
       .catch(error => console.error('Error fetching getGTTOrdersJSON:', error));
-  }, [tokenFile]);
+  }, [tokenFile, reload]);
 
   useEffect(() => {
     fetch(`http://localhost:3000/holdingsJSON?tokenFile=${tokenFile}`)
@@ -19,42 +20,54 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
       .catch(error => console.error('Error fetching holdings:', error));
   }, [tokenFile]);
 
-  const handleCopyToHUF = (order, tokenFile, otherTokenFile )=> {
-    fetch('http://localhost:3000/copyGTT2HUF', {
+  const handleCopyToHUF = (order, tokenFile, otherTokenFile) => {
+    console.log("Going to delete this order " + order.id);
+
+    const copyGTT2HUF = fetch('http://localhost:3000/copyGTT2HUF', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ order, tokenFile: otherTokenFile }),
     })
+    // .then(response => response.json())
     .then(data => {
-      console.log('Success:', data);
-      alert('Copy to HUF successful');
+      console.log('Copy to HUF successful:', data);
+      console.log('Copy to HUF successful');
+      return true;
     })
     .catch((error) => {
-      console.error('Error:', error);
-      alert('Copy to HUF failed');
+      console.error('Error copying to HUF:', error);
+      console.log('Copy to HUF failed');
+      return false;
     });
 
-    alert("Going to delete this order" + order.id);
-
-    fetch('http://localhost:3000/deleteGTTOrder', {
+    const deleteGTTOrder = fetch('http://localhost:3000/deleteGTTOrder', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ tokenFile: tokenFile, orderId: order.id }),
     })
+    // .then(response => response.json())
     .then(data => {
-      console.log('Success:', data);
-      alert('Deleting successful');
+      console.log('Deleting successful:', data);
+      return true;
     })
     .catch((error) => {
-      console.error('Error:', error);
-      alert('Deleting failed');
+      console.error('Error deleting order:', error);
+      return false;
     });
 
-
+    Promise.all([copyGTT2HUF, deleteGTTOrder]).then(results => {
+      const [copySuccessful, deleteSuccessful] = results;
+      if (copySuccessful && deleteSuccessful) {
+        console.log("going to initiate reload = " + reload);
+        setReload(!reload);
+      } else {
+        console.log("reload = " + reload);
+      }
+    });
   };
 
   return (
