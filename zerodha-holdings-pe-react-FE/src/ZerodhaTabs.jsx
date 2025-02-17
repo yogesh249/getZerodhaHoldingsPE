@@ -10,8 +10,10 @@ function ZerodhaTabs() {
 
   useEffect(() => {
     if (key === 'HUF GTTOrders' || key === 'Zerodha GTTOrders') {
-      setReload(!reload);
-    } 
+      setReload(true);
+    } else {
+      setReload(false);
+    }
   }, [key]);
 
   return (

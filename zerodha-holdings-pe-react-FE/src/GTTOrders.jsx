@@ -32,13 +32,13 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
     })
     // .then(response => response.json())
     .then(data => {
-      console.log('Copy to HUF successful:', data);
-      console.log('Copy to HUF successful');
+      console.log('Copy to {otherTokenFile}  successful:', data);
+      console.log('Copy to {otherTokenFile} successful');
       return true;
     })
     .catch((error) => {
-      console.error('Error copying to HUF:', error);
-      console.log('Copy to HUF failed');
+      console.error('Error copying to {otherTokenFile} :', error);
+      console.log('Copy to {otherTokenFile}  failed');
       return false;
     });
 
