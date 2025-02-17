@@ -19,7 +19,7 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
       .catch(error => console.error('Error fetching holdings:', error));
   }, [tokenFile]);
 
-  const handleCopyToHUF = (order) => {
+  const handleCopyToHUF = (order, tokenFile, otherTokenFile )=> {
     fetch('http://localhost:3000/copyGTT2HUF', {
       method: 'POST',
       headers: {
@@ -43,7 +43,7 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ tokenFile: tokenFile, orderId: order.orderId }),
+      body: JSON.stringify({ tokenFile: tokenFile, orderId: order.id }),
     })
     .then(data => {
       console.log('Success:', data);
@@ -71,7 +71,7 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
                             .map(order => (
                                 <div key={order.id}>
                                     {holding.tradingsymbol} {order.orders[0].price}  {order.orders[0].transaction_type} 
-                                    <Button variant="primary" onClick={() => handleCopyToHUF(order)}>Copy to HUF</Button>
+                                    <Button variant="primary" onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile)}>Copy to HUF</Button>
                                 </div>
                             ))}
                     </td>

@@ -70,7 +70,7 @@ app.delete("/deleteGTTOrder", async (req, res) => {
         let tokenFile = req.body.tokenFile;
         tokenFile = "D://" + tokenFile + "_token.txt";
         const token = fs.readFileSync(tokenFile, "utf8");
-        const orderId = req.query.orderId;
+        const orderId = req.body.orderId;
         const response = await axios.delete(
             `https://kite.zerodha.com/oms/gtt/triggers/${orderId}`,
             {
