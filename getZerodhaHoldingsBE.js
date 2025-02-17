@@ -64,6 +64,30 @@ app.get("/getGTTOrdersJSON", async (req, res) => {
         return res.status(500).send("Error fetching GTT triggers");
     }
 });
+app.delete("/deleteGTTOrder", async (req, res) => {
+    console.log("DELETE /deleteGTTOrder route hit"); // Log when the route is accessed
+    try {
+        let tokenFile = req.body.tokenFile;
+        tokenFile = "D://" + tokenFile + "_token.txt";
+        const token = fs.readFileSync(tokenFile, "utf8");
+        const orderId = req.query.orderId;
+        const response = await axios.delete(
+            `https://kite.zerodha.com/oms/gtt/triggers/${orderId}`,
+            {
+                headers: {
+                    Authorization: "enctoken " + token,
+                    "Cache-Control": "no-cache"
+                },
+            }
+        );
+        console.log("Response from API:", response.data);
+        res.status(200).send("GTT order deleted successfully"); // Log the response from
+    } catch (error) {
+        console.error("Error in /deleteGTTOrder:", error); // Log the error
+        res.status(500).send("Error deleting GTT order");
+    }
+});
+
 app.post("/copyGTT2HUF", async (req, res) => {
 
     console.log("POST /copyGTT2HUF route hit"); // Log when the route is accessed
@@ -80,7 +104,7 @@ app.post("/copyGTT2HUF", async (req, res) => {
         // Use the trigger object to create the GTT trigger
         // Log the response from the API
         console.log('trigger=',trigger);
-        let hufTokenFile = "D://huf_token.txt";
+        let hufTokenFile = "D://"+req.body.tokenFile+"_token.txt";
         const hufToken = fs.readFileSync(hufTokenFile, "utf8");
         let condition=trigger.order.condition;
         console.log("condition = ",condition);

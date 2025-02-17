@@ -25,9 +25,8 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ order }),
+      body: JSON.stringify({ order, tokenFile: otherTokenFile }),
     })
-    //.then(response => response.json())
     .then(data => {
       console.log('Success:', data);
       alert('Copy to HUF successful');
@@ -36,6 +35,26 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
       console.error('Error:', error);
       alert('Copy to HUF failed');
     });
+
+    alert("Going to delete this order" + order.id);
+
+    fetch('http://localhost:3000/deleteGTTOrder', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tokenFile: tokenFile, orderId: order.orderId }),
+    })
+    .then(data => {
+      console.log('Success:', data);
+      alert('Deleting successful');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('Deleting failed');
+    });
+
+
   };
 
   return (
