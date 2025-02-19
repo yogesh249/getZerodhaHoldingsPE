@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Holdings.css';
+import Button from 'react-bootstrap/Button';
 
 function Holdings({ tokenFile }) {
   const [holdings, setHoldings] = useState([]);
@@ -13,6 +14,49 @@ function Holdings({ tokenFile }) {
       })
       .catch(error => console.error('Error fetching holdings:', error));
   }, [tokenFile]);
+
+  const handleMoveToOtherAccount = (holding) => {
+    const data = {
+      variety: 'regular',
+      exchange:  holding.exchange,
+      tradingsymbol: holding.tradingsymbol,
+      transaction_type: 'SELL',
+      order_type: 'MARKET',
+      quantity: holding.quantity,
+      price: 0,
+      product: holding.product,
+      validity: 'DAY',
+      disclosed_quantity: 0,
+      trigger_price: 0,
+      squareoff: 0,
+      stoploss: 0,
+      trailing_stoploss: 0,
+      user_id: 'LL9549',// This needs to be fixed.
+      tag: 'quick'
+    };
+
+    fetch('http://localhost:3000/oms/orders/regular', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(data).toString(),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Success:', data);
+      alert('Move to Other Account successful');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('Move to Other Account failed');
+    });
+  };
 
   return (
     <>
@@ -29,6 +73,7 @@ function Holdings({ tokenFile }) {
             <th>Day Change %</th>
             <th>PE</th>
             <th>BV</th>
+            <th>Button</th>
           </tr>
         </thead>
         <tbody>
@@ -43,6 +88,7 @@ function Holdings({ tokenFile }) {
               <td>{holding.day_change_percentage.toFixed(2)}%</td>
               <td>{holding.PE}</td>
               <td>{holding.BV}</td>
+              <td><Button type="primary" onClick={() => handleMoveToOtherAccount(holding)}>Move to Other account</Button></td>
             </tr>
           ))}
         </tbody>
