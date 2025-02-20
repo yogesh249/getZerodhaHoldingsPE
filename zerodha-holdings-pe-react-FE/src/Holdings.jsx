@@ -2,19 +2,7 @@ import { useState, useEffect } from 'react';
 import './Holdings.css';
 import Button from 'react-bootstrap/Button';
 
-function Holdings({ tokenFile }) {
-  const [holdings, setHoldings] = useState([]);
-
-  useEffect(() => {
-    fetch(`http://localhost:3000/holdingsJSON?tokenFile=${tokenFile}`)
-      .then(response => response.json())
-      .then(data => {
-        setHoldings(data);
-        localStorage.setItem(tokenFile + "Holdings", JSON.stringify(data));
-      })
-      .catch(error => console.error('Error fetching holdings:', error));
-  }, [tokenFile]);
-
+function Holdings({ tokenFile, holdings }) {
   const handleMoveToOtherAccount = (holding) => {
     const data = {
       variety: 'regular',
@@ -60,7 +48,7 @@ function Holdings({ tokenFile }) {
 
   return (
     <>
-      <h1>{tokenFile + " Holdings"}</h1>
+      <h1>Holdings</h1>
       <table>
         <thead>
           <tr>

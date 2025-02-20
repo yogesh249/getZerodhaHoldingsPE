@@ -4,17 +4,24 @@ import Tabs from 'react-bootstrap/Tabs';
 import Holdings from './Holdings';
 import GTTOrders from './GTTOrders';
 
-function ZerodhaTabs() {
+function ZerodhaTabs({ tokenFile, otherTokenFile }) {
   const [key, setKey] = useState('Holdings');
-  const [reload, setReload] = useState(false);
+  const [zerodhaHoldings, setZerodhaHoldings] = useState([]);
+  const [hufHoldings, setHufHoldings] = useState([]);
+  useEffect(() => {
+    fetch(`http://localhost:3000/holdingsJSON?tokenFile=${tokenFile}`)
+      .then(response => response.json())
+      .then(data => setZerodhaHoldings(data))
+      .catch(error => console.error('Error fetching zerodha holdings:', error));
+  }, [tokenFile], zerodhaHoldings);
+
 
   useEffect(() => {
-    if (key === 'HUF GTTOrders' || key === 'Zerodha GTTOrders') {
-      setReload(true);
-    } else {
-      setReload(false);
-    }
-  }, [key]);
+    fetch(`http://localhost:3000/holdingsJSON?tokenFile=${otherTokenFile}`)
+      .then(response => response.json())
+      .then(data => setHufHoldings(data))
+      .catch(error => console.error('Error fetching huf holdings:', error));
+  }, [otherTokenFile, hufHoldings]);
 
   return (
     <Tabs
@@ -27,16 +34,16 @@ function ZerodhaTabs() {
       style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }}
     >
       <Tab eventKey="Holdings" title="Holdings">
-        <Holdings tokenFile="zerodha" />
+        <Holdings holdings={zerodhaHoldings} />
       </Tab>
       <Tab eventKey="HUF Holdings" title="HUF Holdings">
-        <Holdings tokenFile="huf" />
+        <Holdings holdings={hufHoldings}/>
       </Tab>
       <Tab eventKey="Zerodha GTTOrders" title="Zerodha GTTOrders">
-        <GTTOrders tokenFile="zerodha" otherTokenFile="huf" reload={reload} />
+        <GTTOrders tokenFile="zerodha" otherTokenFile="huf" />
       </Tab>
       <Tab eventKey="HUF GTTOrders" title="HUF GTTOrders">
-        <GTTOrders tokenFile="huf" otherTokenFile="zerodha" reload={reload} />
+        <GTTOrders tokenFile="huf" otherTokenFile="zerodha" />
       </Tab>
     </Tabs>
   );
