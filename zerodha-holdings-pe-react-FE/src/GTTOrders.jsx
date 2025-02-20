@@ -58,20 +58,29 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
             <tbody>
             {holdings.map(holding => (
                 <tr key={holding.tradingsymbol}>
-                    <td>{holding.tradingsymbol}</td>
-                    <td>
+                    <td align="left">{holding.tradingsymbol}</td>
+                    <td align="right">
                         {gttOrders
                             .filter(order => order.orders[0].tradingsymbol === holding.tradingsymbol)
                             .map(order => (
                                 <div key={order.id}>
-                                    {holding.tradingsymbol} {order.orders[0].price}  {order.orders[0].transaction_type} 
-                                    <Button variant="primary" onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile) }>Copy to {otherTokenFile}</Button>
+                                    <tr
+                                        
+                                    >
+                                        <td>{holding.tradingsymbol}</td>
+                                        <td>{order.orders[0].price} </td>
+                                        <td style={{
+                                            backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
+                                            color: order.orders[0].transaction_type === 'SELL' ? 'white' : 'black'
+                                        }}>{order.orders[0].transaction_type} </td>
+                                        <td>
+                                          <Button variant="primary" 
+                                            onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile) }>Copy to {otherTokenFile}</Button>
+                                        </td>
+                                    </tr>
                                 </div>
-                                
-
                             ))}
                     </td>
-
                 </tr>
             ))}
             </tbody>
