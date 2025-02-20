@@ -83,6 +83,26 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                     </td>
                 </tr>
             ))}
+
+            {gttOrders
+              .filter(order => !holdings.some(holding => holding.tradingsymbol === order.orders[0].tradingsymbol))
+              .map(order => (
+              
+                <tr key={order.id} border="1">
+                  <td>No holdings</td>
+                  <tr>
+                  <td align="left">{order.orders[0].tradingsymbol} {order.orders[0].price}</td>
+                  <td style={{
+                    backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
+                    color: order.orders[0].transaction_type === 'SELL' ? 'white' : 'black'
+                  }}>{order.orders[0].transaction_type}</td>
+                  <td>
+                    <Button variant="primary" 
+                      onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile)}>Copy to {otherTokenFile}</Button>
+                  </td>
+                  </tr>
+                </tr>
+              ))}
             </tbody>
         </table>
     </div>
