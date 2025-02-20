@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
-function GTTOrders({ tokenFile, otherTokenFile, holdings }) {
-  const [gttOrders, setGttOrders] = useState([]);
-  const [reload, setReload] = useState(false);
-
-  useEffect(() => {
-    fetch(`http://localhost:3000/getGTTOrdersJSON?tokenFile=${tokenFile}`)
-      .then(response => response.json())
-      .then(data => setGttOrders(data))
-      .catch(error => console.error('Error fetching getGTTOrdersJSON:', error));
-  }, [tokenFile, reload]);
+function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloadFromGTTOrders, reload }) {
 
 
   const handleCopyToHUF = (order, tokenFile, otherTokenFile) => {
@@ -54,9 +45,9 @@ function GTTOrders({ tokenFile, otherTokenFile, holdings }) {
       const [copySuccessful, deleteSuccessful] = results;
       if (copySuccessful && deleteSuccessful) {
         console.log("going to initiate reload = " + reload);
-        setReload(!reload);
+        // Toggle reload in Zerodha tabs
+        handleReloadFromGTTOrders(!reload);
       } else {
-        console.log("reload = " + reload);
       }
     });
   };

@@ -9,6 +9,29 @@ function ZerodhaTabs({ tokenFile, otherTokenFile }) {
   const [zerodhaHoldings, setZerodhaHoldings] = useState([]);
   const [hufHoldings, setHufHoldings] = useState([]);
 
+  const [zerodhaGttOrders, setZerodhaGttOrders] = useState([]);
+  const [hufGttOrders, setHufGttOrders] = useState([]);
+  const [reload, setReload] = useState(false);
+
+
+  // Function to receive data from child
+  const handleReloadFromGTTOrders = (reloadFromGtt) => {
+    setReload(reloadFromGtt);
+  };
+  useEffect(() => {
+    fetch(`http://localhost:3000/getGTTOrdersJSON?tokenFile=${tokenFile}`)
+      .then(response => response.json())
+      .then(data => setZerodhaGttOrders(data))
+      .catch(error => console.error('Error fetching getGTTOrdersJSON:', error));
+
+  }, [tokenFile, reload]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/getGTTOrdersJSON?tokenFile=${otherTokenFile}`)
+      .then(response => response.json())
+      .then(data => setHufGttOrders(data))
+      .catch(error => console.error('Error fetching getGTTOrdersJSON:', error));
+  }, [tokenFile, reload]);
 
   useEffect(() => {
       console.log('ZerodhaTabs component mounted or tokenFile changed');
@@ -45,10 +68,10 @@ function ZerodhaTabs({ tokenFile, otherTokenFile }) {
         <Holdings  holdings={hufHoldings}/>
       </Tab>
      <Tab eventKey="Zerodha GTTOrders" title="Zerodha GTTOrders">
-        <GTTOrders tokenFile="zerodha" otherTokenFile="huf" holdings={zerodhaHoldings}/>
+        <GTTOrders tokenFile="zerodha" otherTokenFile="huf" gttOrders={zerodhaGttOrders} holdings={zerodhaHoldings} handleReloadFromGTTOrders={handleReloadFromGTTOrders} reload={reload}/>
       </Tab>
       <Tab eventKey="HUF GTTOrders" title="HUF GTTOrders">
-        <GTTOrders tokenFile="huf" otherTokenFile="zerodha" holdings={hufHoldings} />
+        <GTTOrders tokenFile="huf" otherTokenFile="zerodha" gttOrders={hufGttOrders} holdings={hufHoldings} handleReloadFromGTTOrders={handleReloadFromGTTOrders} reload={reload}/>
       </Tab>
     </Tabs>
   );
