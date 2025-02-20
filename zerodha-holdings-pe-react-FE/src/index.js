@@ -4,4 +4,15 @@ import './index.css'; // Add this line
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// ...existing code...
+// Temporarily disable strict mode
+// ReactDOM.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>,
+//   document.getElementById('root')
+// );
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);

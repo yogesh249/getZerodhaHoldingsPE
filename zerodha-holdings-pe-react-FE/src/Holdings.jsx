@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './Holdings.css';
 import Button from 'react-bootstrap/Button';
 
-function Holdings({ tokenFile, holdings }) {
+function Holdings({ holdings }) {
   const handleMoveToOtherAccount = (holding) => {
     const data = {
       variety: 'regular',

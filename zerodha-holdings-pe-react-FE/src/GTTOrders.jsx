@@ -1,24 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
-
-function GTTOrders({ tokenFile, otherTokenFile }) {
+function GTTOrders({ tokenFile, otherTokenFile, holdings }) {
   const [gttOrders, setGttOrders] = useState([]);
-  const [holdings, setHoldings] = useState([]);
-  const [reload, setReload] = useState(false);
-  
+
   useEffect(() => {
     fetch(`http://localhost:3000/getGTTOrdersJSON?tokenFile=${tokenFile}`)
       .then(response => response.json())
       .then(data => setGttOrders(data))
       .catch(error => console.error('Error fetching getGTTOrdersJSON:', error));
-  }, [tokenFile, reload]);
-
-  useEffect(() => {
-    fetch(`http://localhost:3000/holdingsJSON?tokenFile=${tokenFile}`)
-      .then(response => response.json())
-      .then(data => setHoldings(data))
-      .catch(error => console.error('Error fetching holdings:', error));
   }, [tokenFile]);
+
 
   const handleCopyToHUF = (order, tokenFile, otherTokenFile) => {
     console.log("Going to delete this order " + order.id);
@@ -69,31 +60,28 @@ function GTTOrders({ tokenFile, otherTokenFile }) {
       }
     });
   };
-
   return (
     <>
     <div>
         <table border="1">
-          <tbody>
-            <tr>
-                <th>Holdings</th>
-                <th>GTT Orders</th>
-            </tr>
-
+            <tbody>
             {holdings.map(holding => (
                 <tr key={holding.tradingsymbol}>
-                    <td>{holding.tradingsymbol} </td>
+                    <td>{holding.tradingsymbol}</td>
                     <td>
                         {gttOrders
                             .filter(order => order.orders[0].tradingsymbol === holding.tradingsymbol)
                             .map(order => (
                                 <div key={order.id}>
-                                    {holding.tradingsymbol} {order.orders[0].price}  {order.orders[0].transaction_type}
-                                    
-                                    <Button variant="primary" onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile) }>Copy to {otherTokenFile}</Button>
+                                    {holding.tradingsymbol} {order.orders[0].price}  {order.orders[0].transaction_type} 
                                 </div>
+
                             ))}
                     </td>
+                    <td>
+                       <Button variant="primary" onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile) }>Copy to {otherTokenFile}</Button>
+                    </td>
+
                 </tr>
             ))}
             </tbody>
