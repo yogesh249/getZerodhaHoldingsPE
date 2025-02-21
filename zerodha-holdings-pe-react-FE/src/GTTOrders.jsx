@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
+import Alert from "react-bootstrap/Alert";
 function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloadFromGTTOrders, reload }) {
-
+  const [visibleRow, setVisibleRow] = useState(null);
 
   const handleCopyToHUF = (order, tokenFile, otherTokenFile) => {
     console.log("Going to delete this order " + order.id);
@@ -16,11 +17,13 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
     .then(data => {
       console.log('Copy to {otherTokenFile}  successful:', data);
       console.log('Copy to {otherTokenFile} successful');
+      setVisibleRow(order.id);
       return true;
     })
     .catch((error) => {
       console.error('Error copying to {otherTokenFile} :', error);
       console.log('Copy to {otherTokenFile}  failed');
+      setVisibleRow(null);
       return false;
     });
 
@@ -58,17 +61,14 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
             <tbody>
             {holdings.map(holding => (
                 <tr key={holding.tradingsymbol}>
-                    <td align="left">{holding.tradingsymbol}</td>
+                    <td align="left" width="150px">{holding.tradingsymbol}</td>
                     <td align="right">
                         {gttOrders
                             .filter(order => order.orders[0].tradingsymbol === holding.tradingsymbol)
                             .map(order => (
                                 <div key={order.id}>
-                                    <tr
-                                        
-                                    >
-                                        <td>{holding.tradingsymbol}</td>
-                                        <td>{order.orders[0].price} </td>
+                                    <tr>
+                                        <td width="350 px" align="right">{holding.tradingsymbol} {order.orders[0].price} </td>
                                         <td style={{
                                             backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
                                             color: order.orders[0].transaction_type === 'SELL' ? 'white' : 'black'
@@ -77,7 +77,16 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                                           <Button variant="primary" 
                                             onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile) }>Copy to {otherTokenFile}</Button>
                                         </td>
+                                        {visibleRow === order.id && (
+                                          <td><Alert variant="info">
+                                            Success
+                                            </Alert>
+                                        </td>
+                                    )}
                                     </tr>
+                               
+
+                                    
                                 </div>
                             ))}
                     </td>
@@ -89,9 +98,9 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
               .map(order => (
               
                 <tr key={order.id} border="1">
-                  <td>No holdings</td>
+                  <td width="150 px" align="right">No holdings</td>
                   <tr>
-                  <td align="left">{order.orders[0].tradingsymbol} {order.orders[0].price}</td>
+                  <td width="350 px" align="right">{order.orders[0].tradingsymbol} {order.orders[0].price}</td>
                   <td style={{
                     backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
                     color: order.orders[0].transaction_type === 'SELL' ? 'white' : 'black'
