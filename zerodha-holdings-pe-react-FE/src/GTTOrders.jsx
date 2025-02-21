@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Alert from "react-bootstrap/Alert";
 function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloadFromGTTOrders, reload }) {
   const [visibleRow, setVisibleRow] = useState(null);
-
+  const [status, setStatus] = useState("success");
   const handleCopyToHUF = (order, tokenFile, otherTokenFile) => {
     console.log("Going to delete this order " + order.id);
 
@@ -37,10 +37,12 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
     // .then(response => response.json())
     .then(data => {
       console.log('Deleting successful:', data);
+      setVisibleRow(order.id);
       return true;
     })
     .catch((error) => {
       console.error('Error deleting order:', error);
+      setVisibleRow(null);
       return false;
     });
 
@@ -48,9 +50,13 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
       const [copySuccessful, deleteSuccessful] = results;
       if (copySuccessful && deleteSuccessful) {
         console.log("going to initiate reload = " + reload);
-        // Toggle reload in Zerodha tabs
-        handleReloadFromGTTOrders(!reload);
+        setStatus(true);
+        // Refresh the zerodha Tabs after 1 second so that we get time to show alert.
+        setTimeout(()=>handleReloadFromGTTOrders(!reload),1000);
       } else {
+         setVisibleRow(null);
+         setStatus(false);
+         setTimeout(()=>handleReloadFromGTTOrders(!reload),1000);
       }
     });
   };
@@ -78,7 +84,7 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                                             onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile) }>Copy to {otherTokenFile}</Button>
                                         </td>
                                         {visibleRow === order.id && (
-                                          <td><Alert variant="info">
+                                          <td><Alert variant={status ? "primary" : "danger"}>
                                             Success
                                             </Alert>
                                         </td>
