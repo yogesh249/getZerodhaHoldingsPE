@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import './Holdings.css';
 import Button from 'react-bootstrap/Button';
 
-function Holdings({ holdings }) {
+function Holdings({ holdings, src, dest }) {
+
   const handleMoveToOtherAccount = (holding) => {
+    alert(holding.exchange);
     const data = {
       variety: 'regular',
       exchange:  holding.exchange,
@@ -19,14 +21,15 @@ function Holdings({ holdings }) {
       squareoff: 0,
       stoploss: 0,
       trailing_stoploss: 0,
-      user_id: 'LL9549',// This needs to be fixed.
-      tag: 'quick'
+      tag: 'quick',
+      src: src,
+      dest: dest
     };
 
     fetch('http://localhost:3000/oms/orders/regular', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams(data).toString(),
     })

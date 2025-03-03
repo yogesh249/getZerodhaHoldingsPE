@@ -218,6 +218,60 @@ app.post("/copyGTT2HUF", async (req, res) => {
         res.status(500).send("Error processing trigger");
     }
 });
+app.post("/oms/orders/regular", async (req, res) => {
+    console.log("Placing a sell order for "+ req.body); // Log when the route is accessed
+    try {
+        let tokenFile = req.body.src;
+        tokenFile = "D://" + tokenFile + "_token.txt";
+        const token = fs.readFileSync(tokenFile, "utf8");
+        const postData = querystring.stringify(req.body); // Convert JSON data to form-url-encoded type data
+        
+        console.log(postData);
+        const sellResponse = await axios.post(
+            `https://kite.zerodha.com/oms/orders/regular`,
+            postData, // Send the form-url-encoded data
+            {
+                headers: {
+                    Authorization: "enctoken " + token,
+                    "Cache-Control": "no-cache",
+                    "Content-Type": "application/x-www-form-urlencoded" // Set the content type to form-url-encoded
+                },
+            }
+        );
+        console.log("Sell order response from API:", sellResponse.status);
+    } catch (error) {
+        console.error("Error in placing sell order /oms/orders/regular:"); // Log the error
+        res.status(500).send("Error placing sell order");
+    }
+
+    console.log("Placing a BUY order for " + req.body); // Log when the route is accessed
+    try {
+        req.body.transaction_type = "BUY";
+        let tokenFile = req.body.dest;
+        tokenFile = "D://" + tokenFile + "_token.txt";
+        const token = fs.readFileSync(tokenFile, "utf8");
+        const postData = querystring.stringify(req.body); // Convert JSON data to form-url-encoded type data
+        
+        console.log(postData);
+        const buyResponse = await axios.post(
+            `https://kite.zerodha.com/oms/orders/regular`,
+            postData, // Send the form-url-encoded data
+            {
+                headers: {
+                    Authorization: "enctoken " + token,
+                    "Cache-Control": "no-cache",
+                    "Content-Type": "application/x-www-form-urlencoded" // Set the content type to form-url-encoded
+                },
+            }
+        );
+        console.log("Buy order response from API:", buyResponse.status);
+        res.status(200).send("Sell and Buy orders placed successfully"); // Send a single response after both orders
+    } catch (error) {
+        console.error("Error in placing buy order /oms/orders/regular:"); // Log the error
+        res.status(500).send("Error placing buy order");
+    }
+});
+
 app.listen(3000, (error) => {
     if (error) {
         console.error('Error starting server:', error);
