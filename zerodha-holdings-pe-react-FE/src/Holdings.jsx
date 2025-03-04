@@ -5,7 +5,6 @@ import Button from 'react-bootstrap/Button';
 function Holdings({ holdings, src, dest }) {
 
   const handleMoveToOtherAccount = (holding) => {
-    alert(holding.exchange);
     const data = {
       variety: 'regular',
       exchange:  holding.exchange,
@@ -33,12 +32,13 @@ function Holdings({ holdings, src, dest }) {
       },
       body: new URLSearchParams(data).toString(),
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
-      }
-      return response.json();
-    })
+    // .then(response => {
+    //   if (!response.ok) {
+    //     throw new Error('Network response was not ok ' + response.statusText);
+    //   }
+    //   console.log(response);
+    //   return response.json();
+    // })
     .then(data => {
       console.log('Success:', data);
       alert('Move to Other Account successful');
