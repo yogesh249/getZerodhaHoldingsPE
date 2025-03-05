@@ -42,14 +42,14 @@ function ZerodhaTabs({ tokenFile, otherTokenFile }) {
           setZerodhaHoldings(data);
         })
         .catch(error => console.error('Error fetching zerodha holdings:', error));
-  }, [tokenFile]); // useEffect will be called when tokenFile changes
+  }, [tokenFile, reload]); // useEffect will be called when tokenFile changes
 
   useEffect(() => {
     fetch(`http://localhost:3000/holdingsJSON?tokenFile=${otherTokenFile}`)
       .then(response => response.json())
       .then(data => setHufHoldings(data))
       .catch(error => console.error('Error fetching huf holdings:', error));
-  }, [otherTokenFile]); // useEffect will be called when otherTokenFile changes
+  }, [otherTokenFile, reload]); // useEffect will be called when otherTokenFile changes
 
   return (
     <Tabs
@@ -62,10 +62,10 @@ function ZerodhaTabs({ tokenFile, otherTokenFile }) {
       style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }}
     >
       <Tab eventKey="Holdings" title="Holdings">
-        <Holdings holdings={zerodhaHoldings} src="zerodha" dest="huf"  />
+        <Holdings holdings={zerodhaHoldings} src="zerodha" dest="huf" handleReloadFromHoldings={handleReloadFromGTTOrders} reload={reload} />
       </Tab>
       <Tab eventKey="HUF Holdings" title="HUF Holdings">
-        <Holdings  holdings={hufHoldings}  src="huf" dest="zerodha"/>
+        <Holdings  holdings={hufHoldings}  src="huf" dest="zerodha" handleReloadFromHoldings={handleReloadFromGTTOrders} reload={reload}/>
       </Tab>
      <Tab eventKey="Zerodha GTTOrders" title="Zerodha GTTOrders">
         <GTTOrders tokenFile="zerodha" otherTokenFile="huf" gttOrders={zerodhaGttOrders} holdings={zerodhaHoldings} handleReloadFromGTTOrders={handleReloadFromGTTOrders} reload={reload}/>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './Holdings.css';
 import Button from 'react-bootstrap/Button';
 
-function Holdings({ holdings, src, dest }) {
+function Holdings({ holdings, src, dest, handleReloadFromHoldings, reload }) {
 
   const handleMoveToOtherAccount = (holding) => {
     const data = {
@@ -42,11 +42,14 @@ function Holdings({ holdings, src, dest }) {
     .then(data => {
       console.log('Success:', data);
       alert('Move to Other Account successful');
+      setTimeout(()=>handleReloadFromHoldings(!reload),1000);
     })
     .catch((error) => {
       console.error('Error:', error);
       alert('Move to Other Account failed');
     });
+
+
   };
 
   return (
