@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './Holdings.css';
+import '../css/Holdings.css';
 import Button from 'react-bootstrap/Button';
 
 function Holdings({ holdings, src, dest, handleReloadFromHoldings, reload }) {

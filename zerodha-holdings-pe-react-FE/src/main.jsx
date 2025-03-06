@@ -1,8 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import Holdings from './Holdings'
-import ZerodhaTabs from './ZerodhaTabs';
+import Holdings from './Components/Holdings'
+import ZerodhaTabs from './Components/ZerodhaTabs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -73,8 +73,9 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                             .filter(order => order.orders[0].tradingsymbol === holding.tradingsymbol)
                             .map(order => (
                                 <div key={order.id}>
+                                    <table><tbody>
                                     <tr>
-                                        <td width="350 px" align="right">{holding.tradingsymbol} {order.orders[0].price} </td>
+                                        <td width="300 px" align="right">{holding.tradingsymbol} {order.orders[0].price} </td>
                                         <td style={{
                                             backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
                                             color: order.orders[0].transaction_type === 'SELL' ? 'white' : 'black'
@@ -89,7 +90,8 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                                             </Alert>
                                         </td>
                                     )}
-                                    </tr>
+                                    </tr></tbody>
+                                    </table>
                                
 
                                     
@@ -105,6 +107,7 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
               
                 <tr key={order.id} border="1">
                   <td width="150 px" align="right">No holdings</td>
+                  
                   <tr>
                   <td width="350 px" align="right">{order.orders[0].tradingsymbol} {order.orders[0].price}</td>
                   <td style={{
