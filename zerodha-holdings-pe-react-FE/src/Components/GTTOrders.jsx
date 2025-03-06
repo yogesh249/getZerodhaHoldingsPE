@@ -68,19 +68,37 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
             {holdings.map(holding => (
                 <tr key={holding.tradingsymbol}>
                     <td align="left" width="150px">{holding.tradingsymbol}</td>
-                    <td align="right">
+                    <td width="350 px" >
+                      {gttOrders
+                            .filter(order => order.orders[0].tradingsymbol === holding.tradingsymbol)
+                            .map(order => (
+                                <div key={order.id}>
+                                        {holding.tradingsymbol} {order.orders[0].price}
+                                </div>
+                            ))}
+                    
+                    </td>
+                    <td width="350px">
+                      {gttOrders
+                            .filter(order => order.orders[0].tradingsymbol === holding.tradingsymbol)
+                            .map(order => (
+                                <div key={order.id}>
+                                  <span width="300px" style={{
+                                            backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
+                                            color: order.orders[0].transaction_type === 'SELL' ? 'white' : 'black'
+                                          }}>
+                                          {order.orders[0].transaction_type}
+                                  </span> 
+                                </div>
+                            ))}
+                    </td>
+                    <td width="350 px" >
                         {gttOrders
                             .filter(order => order.orders[0].tradingsymbol === holding.tradingsymbol)
                             .map(order => (
                                 <div key={order.id}>
-                                    <table><tbody>
-                                    <tr>
-                                        <td width="300 px" align="right">{holding.tradingsymbol} {order.orders[0].price} </td>
-                                        <td style={{
-                                            backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
-                                            color: order.orders[0].transaction_type === 'SELL' ? 'white' : 'black'
-                                        }}>{order.orders[0].transaction_type} </td>
-                                        <td>
+                                    
+                                        <td width="300px">
                                           <Button variant="primary" 
                                             onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile) }>Copy to {otherTokenFile}</Button>
                                         </td>
@@ -88,13 +106,8 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                                           <td><Alert variant={status ? "primary" : "danger"}>
                                             Success
                                             </Alert>
-                                        </td>
-                                    )}
-                                    </tr></tbody>
-                                    </table>
-                               
-
-                                    
+                                        </td>)}
+                                      
                                 </div>
                             ))}
                     </td>
@@ -107,18 +120,16 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
               
                 <tr key={order.id} border="1">
                   <td width="150 px" align="right">No holdings</td>
-                  
-                  <tr>
                   <td width="350 px" align="right">{order.orders[0].tradingsymbol} {order.orders[0].price}</td>
-                  <td style={{
+                  <td><span width="300 px" style={{
                     backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
                     color: order.orders[0].transaction_type === 'SELL' ? 'white' : 'black'
-                  }}>{order.orders[0].transaction_type}</td>
+                  }}>{order.orders[0].transaction_type}</span></td>
                   <td>
                     <Button variant="primary" 
                       onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile)}>Copy to {otherTokenFile}</Button>
                   </td>
-                  </tr>
+                  
                 </tr>
               ))}
             </tbody>
