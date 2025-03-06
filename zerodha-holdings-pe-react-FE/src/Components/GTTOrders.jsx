@@ -78,7 +78,7 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                             ))}
                     
                     </td>
-                    <td width="350px">
+                    <td width="300px">
                       {gttOrders
                             .filter(order => order.orders[0].tradingsymbol === holding.tradingsymbol)
                             .map(order => (
@@ -92,21 +92,20 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                                 </div>
                             ))}
                     </td>
-                    <td width="350 px" >
+                    <td width="350px" >
                         {gttOrders
                             .filter(order => order.orders[0].tradingsymbol === holding.tradingsymbol)
                             .map(order => (
                                 <div key={order.id}>
-                                    
-                                        <td width="300px">
+                                       
                                           <Button variant="primary" 
                                             onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile) }>Copy to {otherTokenFile}</Button>
-                                        </td>
+                                        
                                         {visibleRow === order.id && (
-                                          <td><Alert variant={status ? "primary" : "danger"}>
+                                          <Alert variant={status ? "primary" : "danger"}>
                                             Success
                                             </Alert>
-                                        </td>)}
+                                        )}
                                       
                                 </div>
                             ))}
