@@ -15,14 +15,14 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
       body: JSON.stringify({ order, tokenFile: otherTokenFile }),
     })
     .then(data => {
-      console.log('Copy to {otherTokenFile}  successful:', data);
-      console.log('Copy to {otherTokenFile} successful');
+      console.log(`Copy to ${otherTokenFile} successful:`, data);
+      console.log(`Copy to ${otherTokenFile} successful`);
       setVisibleRow(order.id);
       return true;
     })
     .catch((error) => {
-      console.error('Error copying to {otherTokenFile} :', error);
-      console.log('Copy to {otherTokenFile}  failed');
+      console.error(`Error copying to {otherTokenFile} :`, error);
+      console.log(`Copy to {otherTokenFile}  failed`);
       setVisibleRow(null);
       return false;
     });
