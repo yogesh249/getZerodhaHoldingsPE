@@ -34,7 +34,18 @@ function GTTOrders({ src, dest, gttOrders, holdings, handleReloadFromGTTOrders, 
       },
       body: JSON.stringify({ tokenFile: src, orderId: order.id }),
     })
-    // .then(response => response.json())
+    // .then(response => {
+    //   console.log(response);
+  
+    //   // Check if response is NOT OK (status 500, 400, etc.)
+    //   if (!response.ok) {
+    //     return response.text().then(errorMessage => { // Read error message
+    //       throw new Error(errorMessage); // Throw error to be caught in catch()
+    //     });
+    //   }
+      
+    //   return response.json(); // Process valid JSON responses
+    // })
     .then(data => {
       console.log('Deleting successful:', data);
       setVisibleRow(order.id);
@@ -87,7 +98,7 @@ function GTTOrders({ src, dest, gttOrders, holdings, handleReloadFromGTTOrders, 
                                             backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
                                             color: 'white'
                                           }}>
-                                          {order.orders[0].transaction_type}
+                                          {order.orders[0].transaction_type} ( { order.orders[0].quantity} )
                                   </span> 
                                 </div>
                             ))}
