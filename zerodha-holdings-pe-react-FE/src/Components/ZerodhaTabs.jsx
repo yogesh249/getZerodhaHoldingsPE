@@ -20,7 +20,18 @@ function ZerodhaTabs({ tokenFile, otherTokenFile }) {
   };
   useEffect(() => {
     fetch(`http://localhost:3000/getGTTOrdersJSON?tokenFile=${tokenFile}`)
-      .then(response => response.json())
+    .then(response => {
+      console.log(response);
+  
+      // Check if response is NOT OK (status 500, 400, etc.)
+      if (!response.ok) {
+        return response.text().then(errorMessage => { // Read error message
+          throw new Error(errorMessage); // Throw error to be caught in catch()
+        });
+      }
+      
+      return response.json(); // Process valid JSON responses
+    })
       .then(data => setZerodhaGttOrders(data))
       .catch(error => console.error('Error fetching getGTTOrdersJSON:', error));
 
@@ -28,7 +39,18 @@ function ZerodhaTabs({ tokenFile, otherTokenFile }) {
 
   useEffect(() => {
     fetch(`http://localhost:3000/getGTTOrdersJSON?tokenFile=${otherTokenFile}`)
-      .then(response => response.json())
+    .then(response => {
+      console.log(response);
+  
+      // Check if response is NOT OK (status 500, 400, etc.)
+      if (!response.ok) {
+        return response.text().then(errorMessage => { // Read error message
+          throw new Error(errorMessage); // Throw error to be caught in catch()
+        });
+      }
+      
+      return response.json(); // Process valid JSON responses
+    })
       .then(data => setHufGttOrders(data))
       .catch(error => console.error('Error fetching getGTTOrdersJSON:', error));
   }, [tokenFile, reload]);
@@ -36,7 +58,18 @@ function ZerodhaTabs({ tokenFile, otherTokenFile }) {
   useEffect(() => {
       console.log('ZerodhaTabs component mounted or tokenFile changed');
       fetch(`http://localhost:3000/holdingsJSON?tokenFile=${tokenFile}`)
-        .then(response => response.json())
+      .then(response => {
+        console.log(response);
+    
+        // Check if response is NOT OK (status 500, 400, etc.)
+        if (!response.ok) {
+          return response.text().then(errorMessage => { // Read error message
+            throw new Error(errorMessage); // Throw error to be caught in catch()
+          });
+        }
+        
+        return response.json(); // Process valid JSON responses
+      })
         .then(data => {
           console.log('Fetched Zerodha Holdings:', data);
           setZerodhaHoldings(data);
@@ -46,7 +79,18 @@ function ZerodhaTabs({ tokenFile, otherTokenFile }) {
 
   useEffect(() => {
     fetch(`http://localhost:3000/holdingsJSON?tokenFile=${otherTokenFile}`)
-      .then(response => response.json())
+    .then(response => {
+      console.log(response);
+  
+      // Check if response is NOT OK (status 500, 400, etc.)
+      if (!response.ok) {
+        return response.text().then(errorMessage => { // Read error message
+          throw new Error(errorMessage); // Throw error to be caught in catch()
+        });
+      }
+      
+      return response.json(); // Process valid JSON responses
+    })
       .then(data => setHufHoldings(data))
       .catch(error => console.error('Error fetching huf holdings:', error));
   }, [otherTokenFile, reload]); // useEffect will be called when otherTokenFile changes

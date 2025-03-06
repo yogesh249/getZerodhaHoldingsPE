@@ -85,7 +85,7 @@ function GTTOrders({ src, dest, gttOrders, holdings, handleReloadFromGTTOrders, 
                                 <div key={order.id}>
                                   <span width="300px" style={{
                                             backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
-                                            color: order.orders[0].transaction_type === 'SELL' ? 'white' : 'black'
+                                            color: 'white'
                                           }}>
                                           {order.orders[0].transaction_type}
                                   </span> 
@@ -122,7 +122,7 @@ function GTTOrders({ src, dest, gttOrders, holdings, handleReloadFromGTTOrders, 
                   <td width="350 px" align="right">{order.orders[0].tradingsymbol} {order.orders[0].price}</td>
                   <td><span width="300 px" style={{
                     backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
-                    color: order.orders[0].transaction_type === 'SELL' ? 'white' : 'black'
+                    color: 'white'
                   }}>{order.orders[0].transaction_type}</span></td>
                   <td>
                     <Button variant="primary" 
