@@ -35,7 +35,7 @@ app.get("/CMP", async (req, res) => {
             } catch (screenerError) {
                 console.error(`Error fetching PE for ${req.query.symbol}:`, screenerError);
             }
-            res.send(cmp);
+            res.status(200).send(cmp);
         
     } catch (error) {
         console.error('Error fetching BV:', error); // Log the error
@@ -68,7 +68,7 @@ app.get("/BV", async (req, res) => {
         
     } catch (error) {
         console.error('Error fetching BV:', error); // Log the error
-        res.status(200).send('0')
+        res.status(200).send(0);
     }
 });
 app.get("/PB", async (req, res) => {
@@ -77,9 +77,9 @@ app.get("/PB", async (req, res) => {
         const cmpResponse = await axios.get(`http://localhost:3000/CMP?symbol=${req.query.symbol}&tokenFile=${req.query.tokenFile}`);
         const bvResponse = await axios.get(`http://localhost:3000/BV?symbol=${req.query.symbol}&tokenFile=${req.query.tokenFile}`);
         if (bvResponse.data != 0) {
-          res.send("" + (cmpResponse.data / bvResponse.data).toFixed(2));
+          res.status(200).send("" + (cmpResponse.data / bvResponse.data).toFixed(2));
         } else {
-          res.send(0);
+          res.status(200).send(0);
         }        
 
     } catch (error) {
@@ -104,14 +104,14 @@ app.get('/holdingsJSON', async (req, res) => {
         const holdings = response.data.data;
         for (const holding of holdings) {
             console.log("Fetching PE for", holding.tradingsymbol);
-            const response = await axios.get('http://localhost:3000/BV?symbol=' + holding.tradingsymbol, {
-                  "Cache-Control": "no-cache"
-            });
-            const bv = response.data;
+            // const response = await axios.get('http://localhost:3000/BV?symbol=' + holding.tradingsymbol, {
+            //       "Cache-Control": "no-cache"
+            // });
+            // const bv = response.data;
             holding.PE = 123;
-            holding.BV = bv;
+            holding.BV = 123;
         }
-        console.log(holdings);
+        console.log(`Number of holdings: ${holdings.length}`);
         res.status(200).send(holdings);
     } catch (error) {
         console.error('Error fetching holdingsJSON:', error); // Log the error
@@ -238,10 +238,10 @@ app.post("/oms/orders/regular", async (req, res) => {
                 },
             }
         );
-        console.log("Sell order response from API:", sellResponse.status);
+        // console.log("Sell order response from API:", sellResponse.data.message);
     } catch (error) {
-        console.error("Error in placing sell order /oms/orders/regular:"); // Log the error
-        res.status(500).send("Error placing sell order");
+        console.error("Error in placing sell order /oms/orders/regular:"+ error.response.data.message); // Log the error
+        return res.status(500).send(error.response.data.message);
     }
 
     console.log("Placing a BUY order for " + req.body); // Log when the route is accessed
@@ -252,7 +252,7 @@ app.post("/oms/orders/regular", async (req, res) => {
         const token = fs.readFileSync(tokenFile, "utf8");
         const postData = querystring.stringify(req.body); // Convert JSON data to form-url-encoded type data
         
-        console.log(postData);
+        // console.log(postData);
         const buyResponse = await axios.post(
             `https://kite.zerodha.com/oms/orders/regular`,
             postData, // Send the form-url-encoded data
@@ -267,8 +267,8 @@ app.post("/oms/orders/regular", async (req, res) => {
         console.log("Buy order response from API:", buyResponse.status);
         res.status(200).send("Sell and Buy orders placed successfully"); // Send a single response after both orders
     } catch (error) {
-        console.error("Error in placing buy order /oms/orders/regular:"); // Log the error
-        res.status(500).send("Error placing buy order");
+        console.error("Error in placing buy order /oms/orders/regular:"+ error.response.data.message); // Log the error
+        res.status(500).send(error.response.data.message);
     }
 });
 

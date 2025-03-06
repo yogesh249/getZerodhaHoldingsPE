@@ -32,21 +32,26 @@ function Holdings({ holdings, src, dest, handleReloadFromHoldings, reload }) {
       },
       body: new URLSearchParams(data).toString(),
     })
-    // .then(response => {
-    //   if (!response.ok) {
-    //     throw new Error('Network response was not ok ' + response.statusText);
-    //   }
-    //   console.log(response);
-    //   return response.json();
-    // })
+    .then(response => {
+      console.log(response);
+  
+      // Check if response is NOT OK (status 500, 400, etc.)
+      if (!response.ok) {
+        return response.text().then(errorMessage => { // Read error message
+          throw new Error(errorMessage); // Throw error to be caught in catch()
+        });
+      }
+      
+      return response.json(); // Process valid JSON responses
+    })
     .then(data => {
       console.log('Success:', data);
-      alert('Move to Other Account successful');
+      alert('Move to Other Account successful' + data.statusText);
       setTimeout(()=>handleReloadFromHoldings(!reload),1000);
     })
     .catch((error) => {
       console.error('Error:', error);
-      alert('Move to Other Account failed');
+      alert('Move to Other Account failed : ' + error.message);
     });
 
 
