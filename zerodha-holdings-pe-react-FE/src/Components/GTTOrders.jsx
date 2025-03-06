@@ -127,6 +127,11 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                   <td>
                     <Button variant="primary" 
                       onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile)}>Copy to {otherTokenFile}</Button>
+                      {visibleRow === order.id && (
+                                          <Alert variant={status ? "primary" : "danger"}>
+                                            Success
+                                            </Alert>
+                       )}
                   </td>
                   
                 </tr>
