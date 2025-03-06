@@ -182,8 +182,8 @@ app.post("/copyGTT2HUF", async (req, res) => {
         // Use the trigger object to create the GTT trigger
         // Log the response from the API
         console.log('trigger=',trigger);
-        let hufTokenFile = "D://"+req.body.tokenFile+"_token.txt";
-        const hufToken = fs.readFileSync(hufTokenFile, "utf8");
+        let tokenFile = "D://"+req.body.dest+"_token.txt";
+        const token = fs.readFileSync(tokenFile, "utf8");
         let condition=trigger.order.condition;
         console.log("condition = ",condition);
 
@@ -206,7 +206,7 @@ app.post("/copyGTT2HUF", async (req, res) => {
             finalPayLoad,
             {
             headers: {
-                Authorization: "enctoken " + hufToken, 
+                Authorization: "enctoken " + token, 
                 "Content-Type": "application/x-www-form-urlencoded"
             },
             }

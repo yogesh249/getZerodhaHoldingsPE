@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
 import Alert from "react-bootstrap/Alert";
-function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloadFromGTTOrders, reload }) {
+function GTTOrders({ src, dest, gttOrders, holdings, handleReloadFromGTTOrders, reload }) {
   const [visibleRow, setVisibleRow] = useState(null);
   const [status, setStatus] = useState("success");
-  const handleCopyToHUF = (order, tokenFile, otherTokenFile) => {
+  const handleCopyToHUF = (order, src, dest) => {
     console.log("Going to delete this order " + order.id);
 
     const copyGTT2HUF = fetch('http://localhost:3000/copyGTT2HUF', {
@@ -12,17 +12,17 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ order, tokenFile: otherTokenFile }),
+      body: JSON.stringify({ order, dest: dest }),
     })
     .then(data => {
-      console.log(`Copy to ${otherTokenFile} successful:`, data);
-      console.log(`Copy to ${otherTokenFile} successful`);
+      console.log(`Copy to ${dest} successful:`, data);
+      console.log(`Copy to ${dest} successful`);
       setVisibleRow(order.id);
       return true;
     })
     .catch((error) => {
-      console.error(`Error copying to {otherTokenFile} :`, error);
-      console.log(`Copy to {otherTokenFile}  failed`);
+      console.error(`Error copying to ${dest} :`, error);
+      console.log(`Copy to ${dest}  failed`);
       setVisibleRow(null);
       return false;
     });
@@ -32,7 +32,7 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ tokenFile: tokenFile, orderId: order.id }),
+      body: JSON.stringify({ tokenFile: src, orderId: order.id }),
     })
     // .then(response => response.json())
     .then(data => {
@@ -99,7 +99,7 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                                 <div key={order.id}>
                                        
                                           <Button variant="primary" 
-                                            onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile) }>Copy to {otherTokenFile}</Button>
+                                            onClick={() => handleCopyToHUF(order, src, dest) }>Copy to {dest}</Button>
                                         
                                         {visibleRow === order.id && (
                                           <Alert variant={status ? "success" : "danger"}>
@@ -126,7 +126,7 @@ function GTTOrders({ tokenFile, otherTokenFile, gttOrders, holdings, handleReloa
                   }}>{order.orders[0].transaction_type}</span></td>
                   <td>
                     <Button variant="primary" 
-                      onClick={() => handleCopyToHUF(order, tokenFile, otherTokenFile)}>Copy to {otherTokenFile}</Button>
+                      onClick={() => handleCopyToHUF(order, src, dest)}>Copy to {dest}</Button>
                       {visibleRow === order.id && (
                           <Alert variant={status ? "success" : "danger"}>
                             {status ? "Success" : "Error"}
