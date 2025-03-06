@@ -134,7 +134,7 @@ function GTTOrders({ src, dest, gttOrders, holdings, handleReloadFromGTTOrders, 
                   <td><span width="300 px" style={{
                     backgroundColor: order.orders[0].transaction_type === 'SELL' ? 'red' : 'green',
                     color: 'white'
-                  }}>{order.orders[0].transaction_type}</span></td>
+                  }}>{order.orders[0].transaction_type} ( { order.orders[0].quantity } )</span></td>
                   <td>
                     <Button variant="primary" 
                       onClick={() => handleCopyToHUF(order, src, dest)}>Copy to {dest}</Button>
