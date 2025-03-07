@@ -42,7 +42,8 @@ function Holdings({ holdings, src, dest, handleReloadFromHoldings, reload }) {
         });
       }
       
-      return response.json(); // Process valid JSON responses
+     // return response.json(); // Process valid JSON responses
+     return response;
     })
     .then(data => {
       console.log('Success:', data);
