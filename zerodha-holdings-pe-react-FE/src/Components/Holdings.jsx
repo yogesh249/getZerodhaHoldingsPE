@@ -88,7 +88,7 @@ function Holdings({ holdings, src, dest, handleReloadFromHoldings, reload }) {
               <td>{holding.day_change_percentage.toFixed(2)}%</td>
               <td>{holding.PE}</td>
               <td>{holding.BV}</td>
-              <td><Button type="primary" onClick={() => handleMoveToOtherAccount(holding)}>Move to Other account</Button></td>
+              <td><Button type="primary" onClick={() => handleMoveToOtherAccount(holding)}>Move to {dest}</Button></td>
             </tr>
           ))}
         </tbody>
